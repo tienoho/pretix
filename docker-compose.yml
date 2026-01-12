@@ -14,7 +14,7 @@ services:
       - PRETIX_DATABASE_NAME=${POSTGRES_DB:-tcg_pretix}
       - PRETIX_DATABASE_USER=${POSTGRES_USER:-tcg_pretix}
       - PRETIX_DATABASE_PASSWORD=${POSTGRES_PASSWORD:?Database password is required}
-      - PRETIX_DATABASE_HOST=db
+      - PRETIX_DATABASE_HOST=${POSTGRES_HOST:-localhost}
       - PRETIX_REDIS_LOCATION=${REDIS_LOCATION:-redis://redis/0}
       - PRETIX_CELERY_BROKER=${CELERY_BROKER:-redis://redis/1}
       - PRETIX_CELERY_BACKEND=${CELERY_BACKEND:-redis://redis/2}
@@ -42,7 +42,7 @@ services:
       - PRETIX_DATABASE_NAME=${POSTGRES_DB:-tcg_pretix}
       - PRETIX_DATABASE_USER=${POSTGRES_USER:-tcg_pretix}
       - PRETIX_DATABASE_PASSWORD=${POSTGRES_PASSWORD:?Database password is required}
-      - PRETIX_DATABASE_HOST=db
+      - PRETIX_DATABASE_HOST=${POSTGRES_HOST:-localhost}
       - PRETIX_REDIS_LOCATION=${REDIS_LOCATION:-redis://redis/0}
       - PRETIX_CELERY_BROKER=${CELERY_BROKER:-redis://redis/1}
       - PRETIX_CELERY_BACKEND=${CELERY_BACKEND:-redis://redis/2}
