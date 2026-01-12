@@ -25,4 +25,4 @@ local/
 .pydevproject
 .DS_Store
 
-
+.env

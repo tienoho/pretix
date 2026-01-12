@@ -6,26 +6,28 @@ services:
     image: pretix/pretix:latest
     container_name: pretix_app
     ports:
-      - "8000:80"
+      - "${PRETIX_PORT:-8000}:80"
     environment:
-      - PRETIX_DEBUG=True
-      - PRETIX_URL=http://localhost:8000
+      - PRETIX_DEBUG=${PRETIX_DEBUG:-False}
+      - PRETIX_URL=${PRETIX_URL:-http://localhost:8000}
       - PRETIX_DATABASE_BACKEND=postgresql
-      - PRETIX_DATABASE_NAME=pretix
-      - PRETIX_DATABASE_USER=pretix
-      - PRETIX_DATABASE_PASSWORD=pretix
+      - PRETIX_DATABASE_NAME=${POSTGRES_DB:-tcg_pretix}
+      - PRETIX_DATABASE_USER=${POSTGRES_USER:-tcg_pretix}
+      - PRETIX_DATABASE_PASSWORD=${POSTGRES_PASSWORD:?Database password is required}
       - PRETIX_DATABASE_HOST=db
-      - PRETIX_REDIS_LOCATION=redis://redis/0
-      - PRETIX_CELERY_BROKER=redis://redis/1
-      - PRETIX_CELERY_BACKEND=redis://redis/2
-      - PRETIX_MAIL_FROM=pretix@localhost
+      - PRETIX_REDIS_LOCATION=${REDIS_LOCATION:-redis://redis/0}
+      - PRETIX_CELERY_BROKER=${CELERY_BROKER:-redis://redis/1}
+      - PRETIX_CELERY_BACKEND=${CELERY_BACKEND:-redis://redis/2}
+      - PRETIX_MAIL_FROM=${PRETIX_MAIL_FROM:-tien.le@tuanchaugroup.com.vn}
       # Automated migration on startup
-      - AUTOMIGRATE=yes
+      - AUTOMIGRATE=${AUTOMIGRATE:-yes}
     volumes:
       - ./data:/data
     depends_on:
-      - db
-      - redis
+      # db:
+      #   condition: service_healthy
+      redis:
+        condition: service_healthy
     restart: unless-stopped
 
   pretix-worker:
@@ -34,40 +36,55 @@ services:
     container_name: pretix_worker
     command: taskworker
     environment:
-      - PRETIX_DEBUG=True
-      - PRETIX_URL=http://localhost:8000
+      - PRETIX_DEBUG=${PRETIX_DEBUG:-False}
+      - PRETIX_URL=${PRETIX_URL:-http://localhost:8000}
       - PRETIX_DATABASE_BACKEND=postgresql
-      - PRETIX_DATABASE_NAME=pretix
-      - PRETIX_DATABASE_USER=pretix
-      - PRETIX_DATABASE_PASSWORD=pretix
+      - PRETIX_DATABASE_NAME=${POSTGRES_DB:-tcg_pretix}
+      - PRETIX_DATABASE_USER=${POSTGRES_USER:-tcg_pretix}
+      - PRETIX_DATABASE_PASSWORD=${POSTGRES_PASSWORD:?Database password is required}
       - PRETIX_DATABASE_HOST=db
-      - PRETIX_REDIS_LOCATION=redis://redis/0
-      - PRETIX_CELERY_BROKER=redis://redis/1
-      - PRETIX_CELERY_BACKEND=redis://redis/2
-      - PRETIX_MAIL_FROM=pretix@localhost
+      - PRETIX_REDIS_LOCATION=${REDIS_LOCATION:-redis://redis/0}
+      - PRETIX_CELERY_BROKER=${CELERY_BROKER:-redis://redis/1}
+      - PRETIX_CELERY_BACKEND=${CELERY_BACKEND:-redis://redis/2}
+      - PRETIX_MAIL_FROM=${PRETIX_MAIL_FROM:-tien.le@tuanchaugroup.com.vn}
       - AUTOMIGRATE=skip
     volumes:
       - ./data:/data
     depends_on:
-      - db
-      - redis
+      # db:
+      #   condition: service_healthy
+      redis:
+        condition: service_healthy
     restart: unless-stopped
 
-  db:
-    image: postgres:15-alpine
-    container_name: pretix_db
-    environment:
-      - POSTGRES_DB=pretix
-      - POSTGRES_USER=pretix
-      - POSTGRES_PASSWORD=pretix
-    volumes:
-      - db-data:/var/lib/postgresql/data
-    restart: unless-stopped
+  # db:
+  #   image: postgres:15-alpine
+  #   container_name: pretix_db
+  #   environment:
+  #     - POSTGRES_DB=${POSTGRES_DB:-tcg_pretix}
+  #     - POSTGRES_USER=${POSTGRES_USER:-tcg_pretix}
+  #     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?Database password is required}
+  #   volumes:
+  #     - db-data:/var/lib/postgresql/data
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-pretix} -d ${POSTGRES_DB:-pretix}"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #   restart: unless-stopped
 
   redis:
     image: redis:alpine
     container_name: pretix_redis
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     restart: unless-stopped
 
 volumes:
   db-data:
+  redis-data:
