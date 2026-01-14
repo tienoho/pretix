@@ -3,7 +3,8 @@ production: localecompile staticfiles compress
 LNGS:=`find pretix/locale/ -mindepth 1 -maxdepth 1 -type d -printf "-l %f "`
 
 localecompile:
-	# ./manage.py compilemessages
+localecompile:
+	./manage.py compilemessages -l en -l vi
 
 localegen:
 	./manage.py makemessages --keep-pot --ignore "pretix/static/npm_dir/*" $(LNGS)
@@ -16,7 +17,7 @@ compress: npminstall
 	./manage.py compress
 
 jsi18n: localecompile
-	# ./manage.py compilejsi18n
+	./manage.py compilejsi18n -l en -l vi
 
 test:
 	py.test tests
