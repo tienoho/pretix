@@ -88,6 +88,7 @@ CORE_MODULES = {
 
 ALL_LANGUAGES = [
     ('en', _('English')),
+    ('vi', _('Vietnamese')),
     ('de', _('German')),
     ('de-informal', _('German (informal)')),
     ('ar', _('Arabic')),
