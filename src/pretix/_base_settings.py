@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'pretix.helpers',
     'rest_framework',
     'djangoformsetjs',
+    'pretix.plugins.gridview',
     'compressor',
     'bootstrap3',
     'pretix.plugins.banktransfer',
@@ -88,7 +89,7 @@ CORE_MODULES = {
 
 ALL_LANGUAGES = [
     ('en', _('English')),
-    ('vi', _('Vietnamese')),
+    # ('vi', _('Vietnamese')),
     ('de', _('German')),
     ('de-informal', _('German (informal)')),
     ('ar', _('Arabic')),

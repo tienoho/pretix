@@ -22,7 +22,9 @@ services:
       # Automated migration on startup
       - AUTOMIGRATE=${AUTOMIGRATE:-yes}
     volumes:
+      - ./custom-templates:/data/templates
       - ./data:/data
+      - .:/pretix/src
     depends_on:
       # db:
       #   condition: service_healthy
