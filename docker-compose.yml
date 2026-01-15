@@ -5,6 +5,7 @@ services:
     build: .
     image: pretix/pretix:latest
     container_name: pretix_app
+    user: root
     ports:
       - "${PRETIX_PORT:-8000}:80"
     environment:
@@ -36,6 +37,7 @@ services:
     build: .
     image: pretix/pretix:latest
     container_name: pretix_worker
+    user: root
     command: taskworker
     environment:
       - PRETIX_DEBUG=${PRETIX_DEBUG:-False}
@@ -52,6 +54,7 @@ services:
       - AUTOMIGRATE=skip
     volumes:
       - ./data:/data
+      - ./src/pretix:/pretix/src/pretix
     depends_on:
       # db:
       #   condition: service_healthy
