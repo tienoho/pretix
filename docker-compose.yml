@@ -9,8 +9,8 @@ services:
     ports:
       - "${PRETIX_PORT:-8000}:80"
     environment:
-      - PRETIX_DEBUG=${PRETIX_DEBUG:-False}
-      - PRETIX_URL=${PRETIX_URL:-http://10.1.31.21:8000}
+      - PRETIX_DJANGO_DEBUG=${PRETIX_DEBUG:-False}
+      - PRETIX_PRETIX_URL=http://10.1.31.21:8000
       - PRETIX_DATABASE_BACKEND=postgresql
       - PRETIX_DATABASE_NAME=${POSTGRES_DB:-tcg_pretix}
       - PRETIX_DATABASE_USER=${POSTGRES_USER:-tcg_pretix}
@@ -39,8 +39,8 @@ services:
     user: root
     command: taskworker
     environment:
-      - PRETIX_DEBUG=${PRETIX_DEBUG:-False}
-      - PRETIX_URL=${PRETIX_URL:-http://10.1.31.21:8000}
+      - PRETIX_DJANGO_DEBUG=${PRETIX_DEBUG:-False}
+      - PRETIX_PRETIX_URL=http://10.1.31.21:8000
       - PRETIX_DATABASE_BACKEND=postgresql
       - PRETIX_DATABASE_NAME=${POSTGRES_DB:-tcg_pretix}
       - PRETIX_DATABASE_USER=${POSTGRES_USER:-tcg_pretix}
