@@ -1,12 +1,14 @@
 from pretix.settings import *
 
 LOGGING['handlers']['mail_admins']['include_html'] = True
-STORAGES["staticfiles"]["BACKEND"] = 'django.core.files.storage.FileSystemStorage'
+STORAGES["staticfiles"]["BACKEND"] = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 COMPRESS_ENABLED = True
 COMPRESS_OFFLINE = False
 
 ALLOWED_HOSTS = ['*']
+# Fix CSRF for non-standard port access
+CSRF_TRUSTED_ORIGINS = ['http://10.1.31.21:8000']
 
 # Allow any host to be treated as a system domain (bypassing checking against SITE_URL)
 class AllHosts:
