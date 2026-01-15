@@ -68,7 +68,8 @@ RUN chmod +x /usr/local/bin/pretix && \
     chown -R pretixuser:pretixuser /pretix /data data &&  \
     sudo -u pretixuser make production
 
-USER pretixuser
+# Run as root to allow write access to mounted /data volume
+# USER pretixuser
 VOLUME ["/etc/pretix", "/data"]
 EXPOSE 80
 ENTRYPOINT ["pretix"]
