@@ -24,7 +24,7 @@ services:
     volumes:
       - ./custom-templates:/data/templates
       - ./data:/data
-      - ./src:/pretix/src
+      - ./src/pretix:/pretix/src/pretix
     depends_on:
       # db:
       #   condition: service_healthy
