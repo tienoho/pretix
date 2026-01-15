@@ -25,7 +25,6 @@ services:
     volumes:
       - ./custom-templates:/data/templates
       - ./data:/data
-      - ./src/pretix:/pretix/src/pretix
     depends_on:
       # db:
       #   condition: service_healthy
@@ -54,7 +53,6 @@ services:
       - AUTOMIGRATE=skip
     volumes:
       - ./data:/data
-      - ./src/pretix:/pretix/src/pretix
     depends_on:
       # db:
       #   condition: service_healthy
