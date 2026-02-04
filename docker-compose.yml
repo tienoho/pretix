@@ -8,7 +8,7 @@ services:
     user: root
     ports:
       - "${PRETIX_PORT:-8001}:80"
-      - "443:443"
+      - "8443:443"
     environment:
       - PRETIX_DJANGO_DEBUG=${PRETIX_DEBUG:-False}
       - PRETIX_PRETIX_URL=${PRETIX_PRETIX_URL:-https://dev-pretix.tuanchaugroup.com}
