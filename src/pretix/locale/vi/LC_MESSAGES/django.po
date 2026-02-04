@@ -956,7 +956,7 @@ msgstr "Email người tham dự"
 #: pretix/presale/templates/pretixpresale/event/fragment_cart.html:182
 #: pretix/presale/templates/pretixpresale/event/fragment_cart.html:185
 msgid "Attendee company"
-msgstr "Công ty tham dự"
+msgstr "Tên công ty (Người tham dự)"
 
 #: pretix/base/datasync/sourcefields.py:241
 #, fuzzy
@@ -968,24 +968,24 @@ msgstr "Địa chỉ người tham dự"
 #, fuzzy
 #| msgid "Attendee ZIP code"
 msgid "Attendee address ZIP code"
-msgstr "Mã zip tham dự"
+msgstr "Mã bưu chính"
 
 #: pretix/base/datasync/sourcefields.py:259
 #, fuzzy
 #| msgid "Attendee address"
 msgid "Attendee address city"
-msgstr "Địa chỉ người tham dự"
+msgstr "Thành phố"
 
 #: pretix/base/datasync/sourcefields.py:268
 #, fuzzy
 #| msgid "Attendee address"
 msgid "Attendee address country"
-msgstr "Địa chỉ người tham dự"
+msgstr "Quốc gia"
 
 #: pretix/base/datasync/sourcefields.py:279
 #: pretix/base/exporters/orderlist.py:653 pretix/base/pdf.py:346
 msgid "Invoice address company"
-msgstr "Công ty địa chỉ hóa đơn"
+msgstr "Tên công ty (Hóa đơn)"
 
 #: pretix/base/datasync/sourcefields.py:288
 #: pretix/base/exporters/orderlist.py:465
@@ -2207,7 +2207,7 @@ msgstr "đòi hỏi sự chú ý đặc biệt"
 #: pretix/base/models/items.py:1248 pretix/base/models/orders.py:289
 #: pretix/plugins/checkinlists/exporters.py:526
 msgid "Check-in text"
-msgstr "Văn bản Check-in"
+msgstr "Văn bản Soát vé"
 
 #: pretix/base/exporters/items.py:91 pretix/base/models/items.py:667
 #: pretix/base/models/items.py:1168
@@ -16508,7 +16508,7 @@ msgstr "Đối tượng này đã được tạo ra bằng cách nhân bản."
 
 #: pretix/control/logdisplay.py:694
 msgid "The organizer has been changed."
-msgstr "Người tổ chức đã được thay đổi."
+msgstr "Ban tổ chức đã được thay đổi."
 
 #: pretix/control/logdisplay.py:695
 msgid "The organizer settings have been changed."
@@ -16780,7 +16780,7 @@ msgstr ""
 #: pretix/control/logdisplay.py:771
 #, python-brace-format
 msgid "The organizer \"{name}\" has been deleted."
-msgstr "Người tổ chức  \"{name} \" đã bị xóa."
+msgstr "Ban tổ chức  \"{name} \" đã bị xóa."
 
 #: pretix/control/logdisplay.py:772 pretix/control/logdisplay.py:1001
 msgid "A voucher has been sent to a person on the waiting list."
@@ -20568,7 +20568,7 @@ msgstr "Bán"
 #: pretix/control/templates/pretixcontrol/events/index.html:160
 #: pretix/control/templates/pretixcontrol/organizers/detail.html:124
 msgid "Open event dashboard"
-msgstr "Bảng điều khiển sự kiện mở"
+msgstr "Trang tổng quan sự kiện mở"
 
 #: pretix/control/templates/pretixcontrol/font_option.html:2
 msgctxt "typography"
@@ -27537,14 +27537,14 @@ msgstr "Nhà tổ chức này không thể bị xóa."
 
 #: pretix/control/views/organizer.py:425
 msgid "The organizer has been deleted."
-msgstr "Người tổ chức đã bị xóa."
+msgstr "Ban tổ chức đã bị xóa."
 
 #: pretix/control/views/organizer.py:429
 msgid ""
 "The organizer could not be deleted as some constraints (e.g. data created by "
 "plug-ins) do not allow it."
 msgstr ""
-"Người tổ chức không thể bị xóa vì một số ràng buộc (ví dụ: dữ liệu được tạo "
+"Ban tổ chức không thể bị xóa vì một số ràng buộc (ví dụ: dữ liệu được tạo "
 "bởi các trình cắm) không cho phép nó."
 
 #: pretix/control/views/organizer.py:439

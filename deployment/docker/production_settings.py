@@ -8,7 +8,7 @@ COMPRESS_OFFLINE = False
 
 ALLOWED_HOSTS = ['*']
 # Fix CSRF for non-standard port access
-CSRF_TRUSTED_ORIGINS = ['http://10.1.31.21:8000']
+CSRF_TRUSTED_ORIGINS = ['http://10.1.31.21:8000', 'https://dev-pretix.tuanchaugroup.com', 'https://pretix.tuanchaugroup.com']
 
 # Allow any host to be treated as a system domain (bypassing checking against SITE_URL)
 class AllHosts:

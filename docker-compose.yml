@@ -7,11 +7,13 @@ services:
     container_name: pretix_app
     user: root
     ports:
-      - "${PRETIX_PORT:-8000}:80"
+      - "${PRETIX_PORT:-8001}:80"
+      - "443:443"
     environment:
       - PRETIX_DJANGO_DEBUG=${PRETIX_DEBUG:-False}
-      - PRETIX_PRETIX_URL=http://10.1.31.21:8000
+      - PRETIX_PRETIX_URL=${PRETIX_PRETIX_URL:-https://dev-pretix.tuanchaugroup.com}
       - PRETIX_PRETIX_TRUST_X_FORWARDED_PROTO=on
+      - PRETIX_LOCALE_DEFAULT=vi
       - PRETIX_DATABASE_BACKEND=postgresql
       - PRETIX_DATABASE_NAME=${POSTGRES_DB:-tcg_pretix}
       - PRETIX_DATABASE_USER=${POSTGRES_USER:-tcg_pretix}
@@ -26,6 +28,7 @@ services:
     volumes:
       - ./custom-templates:/data/templates
       - ./data:/data
+      - ./ssl:/etc/pretix/ssl
     depends_on:
       # db:
       #   condition: service_healthy
@@ -42,6 +45,8 @@ services:
     environment:
       - PRETIX_DJANGO_DEBUG=${PRETIX_DEBUG:-False}
       - PRETIX_PRETIX_URL=http://10.1.31.21:8000
+      - PRETIX_PRETIX_TRUST_X_FORWARDED_PROTO=on
+      - PRETIX_LOCALE_DEFAULT=vi
       - PRETIX_DATABASE_BACKEND=postgresql
       - PRETIX_DATABASE_NAME=${POSTGRES_DB:-tcg_pretix}
       - PRETIX_DATABASE_USER=${POSTGRES_USER:-tcg_pretix}

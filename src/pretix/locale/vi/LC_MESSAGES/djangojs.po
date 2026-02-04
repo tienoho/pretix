@@ -35,16 +35,16 @@ msgstr "PayPal"
 
 #: pretix/plugins/paypal2/static/pretixplugins/paypal2/pretix-paypal.js:35
 msgid "Venmo"
-msgstr "Nền tảng Venmo"
+msgstr "Venmo"
 
 #: pretix/plugins/paypal2/static/pretixplugins/paypal2/pretix-paypal.js:36
 #: pretix/static/pretixpresale/js/walletdetection.js:38
 msgid "Apple Pay"
-msgstr "Nền tảng Apple Pay"
+msgstr "Apple Pay"
 
 #: pretix/plugins/paypal2/static/pretixplugins/paypal2/pretix-paypal.js:37
 msgid "Itaú"
-msgstr "Nền tảng Itaú"
+msgstr "Itaú"
 
 #: pretix/plugins/paypal2/static/pretixplugins/paypal2/pretix-paypal.js:38
 msgid "PayPal Credit"
@@ -343,12 +343,12 @@ msgstr "Không"
 
 #: pretix/static/lightbox/js/lightbox.js:96
 msgid "close"
-msgstr "đóng"
+msgstr "Đóng"
 
 #: pretix/static/pretixbase/js/addressform.js:101
 #: pretix/static/pretixpresale/js/ui/main.js:529
 msgid "required"
-msgstr "bắt buộc"
+msgstr "Bắt buộc"
 
 #: pretix/static/pretixbase/js/asynctask.js:13
 msgid ""
@@ -755,7 +755,7 @@ msgstr "Gia hạn giữ chỗ"
 
 #: pretix/static/pretixpresale/js/ui/main.js:194
 msgid "The organizer keeps %(currency)s %(amount)s"
-msgstr "Người tổ chức giữ lại %(currency)s %(amount)s"
+msgstr "Ban tổ chức giữ lại %(currency)s %(amount)s"
 
 #: pretix/static/pretixpresale/js/ui/main.js:202
 msgid "You get %(currency)s %(amount)s back"
@@ -771,7 +771,7 @@ msgstr "Thời gian địa phương của bạn:"
 
 #: pretix/static/pretixpresale/js/walletdetection.js:39
 msgid "Google Pay"
-msgstr "Nền tảng Google Pay"
+msgstr "Google Pay"
 
 #: pretix/static/pretixpresale/js/widget/widget.js:16
 msgctxt "widget"
