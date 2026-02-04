@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   pretix:
     build: .
@@ -10,8 +8,9 @@ services:
       - "${PRETIX_PORT:-8001}:80"
       - "8443:443"
     environment:
+      - DATA_DIR=/data
       - PRETIX_DJANGO_DEBUG=${PRETIX_DEBUG:-False}
-      - PRETIX_PRETIX_URL=${PRETIX_PRETIX_URL:-https://dev-pretix.tuanchaugroup.com}
+      - PRETIX_PRETIX_URL=${PRETIX_PRETIX_URL:-https://dev-pretix.tuanchaugroup.com:8443}
       - PRETIX_PRETIX_TRUST_X_FORWARDED_PROTO=on
       - PRETIX_LOCALE_DEFAULT=vi
       - PRETIX_DATABASE_BACKEND=postgresql
@@ -30,8 +29,6 @@ services:
       - ./data:/data
       - ./ssl:/etc/pretix/ssl
     depends_on:
-      # db:
-      #   condition: service_healthy
       redis:
         condition: service_healthy
     restart: unless-stopped
@@ -43,8 +40,9 @@ services:
     user: root
     command: taskworker
     environment:
+      - DATA_DIR=/data
       - PRETIX_DJANGO_DEBUG=${PRETIX_DEBUG:-False}
-      - PRETIX_PRETIX_URL=http://10.1.31.21:8000
+      - PRETIX_PRETIX_URL=http://localhost:80
       - PRETIX_PRETIX_TRUST_X_FORWARDED_PROTO=on
       - PRETIX_LOCALE_DEFAULT=vi
       - PRETIX_DATABASE_BACKEND=postgresql
@@ -60,27 +58,9 @@ services:
     volumes:
       - ./data:/data
     depends_on:
-      # db:
-      #   condition: service_healthy
       redis:
         condition: service_healthy
     restart: unless-stopped
-
-  # db:
-  #   image: postgres:15-alpine
-  #   container_name: pretix_db
-  #   environment:
-  #     - POSTGRES_DB=${POSTGRES_DB:-tcg_pretix}
-  #     - POSTGRES_USER=${POSTGRES_USER:-tcg_pretix}
-  #     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?Database password is required}
-  #   volumes:
-  #     - db-data:/var/lib/postgresql/data
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-pretix} -d ${POSTGRES_DB:-pretix}"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 5
-  #   restart: unless-stopped
 
   redis:
     image: redis:alpine
@@ -95,5 +75,4 @@ services:
     restart: unless-stopped
 
 volumes:
-  db-data:
   redis-data:
