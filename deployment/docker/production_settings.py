@@ -20,3 +20,6 @@ getLocalHostNames = AllHosts()
 # Wait, middlewares import 'from django.conf import settings'. 
 # settings object values come from this file.
 LOCAL_HOST_NAMES = AllHosts()
+
+# CSP: Allow Google Fonts
+CSP_ADDITIONAL_HEADER = "font-src https://fonts.gstatic.com; style-src https://fonts.googleapis.com"
