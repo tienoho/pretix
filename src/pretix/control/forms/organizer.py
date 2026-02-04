@@ -474,6 +474,7 @@ class OrganizerSettingsForm(SettingsForm):
         'customer_accounts',
         'customer_accounts_native',
         'customer_accounts_link_by_email',
+        'customer_accounts_require_login_for_order_access',
         'invoice_regenerate_allowed',
         'contact_mail',
         'imprint_url',
@@ -584,6 +585,7 @@ class MailSettingsForm(SettingsForm):
         help_text=''.join([
             str(_("All emails will be sent to this address as a Bcc copy.")),
             str(_("You can specify multiple recipients separated by commas.")),
+            str(_("Sensitive emails like password resets will not be sent in Bcc.")),
         ]),
         validators=[multimail_validate],
         required=False,

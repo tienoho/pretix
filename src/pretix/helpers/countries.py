@@ -136,3 +136,19 @@ custom_translations = [
     gettext_noop("North Macedonia"),
     gettext_noop("Macao"),
 ]
+
+
+def pycountry_add(db, **kw):
+    # Workaround for https://github.com/pycountry/pycountry/issues/281
+    db._load()
+    obj = db.factory(**kw)
+    db.objects.append(obj)
+    for key, value in kw.items():
+        if key in db.no_index:
+            continue
+        value = value.lower()
+        index = db.indices.setdefault(key, {})
+        if key in ["country_code"]:
+            index.setdefault(value, set()).add(obj)
+        else:
+            index[value] = obj

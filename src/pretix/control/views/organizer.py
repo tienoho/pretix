@@ -32,6 +32,7 @@
 # distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under the License.
 
+import copy
 import json
 import logging
 import re
@@ -102,7 +103,7 @@ from pretix.base.plugins import (
     PLUGIN_LEVEL_ORGANIZER,
 )
 from pretix.base.services.export import multiexport, scheduled_organizer_export
-from pretix.base.services.mail import SendMailException, mail, prefix_subject
+from pretix.base.services.mail import mail, prefix_subject
 from pretix.base.signals import register_multievent_data_exporters
 from pretix.base.templatetags.rich_text import markdown_compile_email
 from pretix.base.views.tasks import AsyncAction
@@ -1036,24 +1037,21 @@ class TeamMemberView(OrganizerDetailViewMixin, OrganizerPermissionRequiredMixin,
         return ctx
 
     def _send_invite(self, instance):
-        try:
-            mail(
-                instance.email,
-                _('pretix account invitation'),
-                'pretixcontrol/email/invitation.txt',
-                {
-                    'user': self,
-                    'organizer': self.request.organizer.name,
-                    'team': instance.team.name,
-                    'url': build_global_uri('control:auth.invite', kwargs={
-                        'token': instance.token
-                    })
-                },
-                event=None,
-                locale=self.request.LANGUAGE_CODE
-            )
-        except SendMailException:
-            pass  # Already logged
+        mail(
+            instance.email,
+            _('pretix account invitation'),
+            'pretixcontrol/email/invitation.txt',
+            {
+                'user': self,
+                'organizer': self.request.organizer.name,
+                'team': instance.team.name,
+                'url': build_global_uri('control:auth.invite', kwargs={
+                    'token': instance.token
+                })
+            },
+            event=None,
+            locale=self.request.LANGUAGE_CODE
+        )
 
     @transaction.atomic
     def post(self, request, *args, **kwargs):
@@ -1943,8 +1941,8 @@ class ExportMixin:
         for ex in self.exporters:
             if id != ex.identifier:
                 continue
-            if self.scheduled:
-                initial = dict(self.scheduled.export_form_data)
+            if self.scheduled or self.scheduled_copy_from:
+                initial = dict((self.scheduled or self.scheduled_copy_from).export_form_data)
 
                 test_form = ExporterForm(data=self.request.GET, prefix=ex.identifier)
                 test_form.fields = ex.export_form_fields
@@ -2047,6 +2045,11 @@ class ExportMixin:
         elif "scheduled" in self.request.GET:
             return get_object_or_404(self.get_scheduled_queryset(), pk=self.request.GET.get("scheduled"))
 
+    @cached_property
+    def scheduled_copy_from(self):
+        if "scheduled_copy_from" in self.request.GET:
+            return get_object_or_404(self.get_scheduled_queryset(), pk=self.request.GET.get("scheduled_copy_from"))
+
 
 class ExportDoView(OrganizerPermissionRequiredMixin, ExportMixin, AsyncAction, TemplateView):
     known_errortypes = ['ExportError', 'ExportEmptyError']
@@ -2113,7 +2116,16 @@ class ExportView(OrganizerPermissionRequiredMixin, ExportMixin, ListView):
     @transaction.atomic()
     def post(self, request, *args, **kwargs):
         if request.POST.get("schedule") == "save":
-            if self.exporter.form.is_valid() and self.rrule_form.is_valid() and self.schedule_form.is_valid():
+            if not self.has_permission():
+                messages.error(
+                    self.request,
+                    _(
+                        "Your user account does not have sufficient permission to run this report, therefore "
+                        "you cannot schedule it."
+                    )
+                )
+                return super().get(request, *args, **kwargs)
+            elif self.exporter.form.is_valid() and self.rrule_form.is_valid() and self.schedule_form.is_valid():
                 self.schedule_form.instance.export_identifier = self.exporter.identifier
                 self.schedule_form.instance.export_form_data = self.exporter.form.cleaned_data
                 self.schedule_form.instance.schedule_rrule = str(self.rrule_form.to_rrule())
@@ -2151,6 +2163,8 @@ class ExportView(OrganizerPermissionRequiredMixin, ExportMixin, ListView):
     def rrule_form(self):
         if self.scheduled:
             initial = RRuleForm.initial_from_rrule(self.scheduled.schedule_rrule)
+        elif self.scheduled_copy_from:
+            initial = RRuleForm.initial_from_rrule(self.scheduled_copy_from.schedule_rrule)
         else:
             initial = {}
         return RRuleForm(
@@ -2162,11 +2176,15 @@ class ExportView(OrganizerPermissionRequiredMixin, ExportMixin, ListView):
 
     @cached_property
     def schedule_form(self):
-        instance = self.scheduled or ScheduledOrganizerExport(
-            organizer=self.request.organizer,
-            owner=self.request.user,
-            timezone=str(get_current_timezone()),
-        )
+        if self.scheduled_copy_from:
+            instance = copy.copy(self.scheduled_copy_from)
+            instance.pk = None
+        else:
+            instance = self.scheduled or ScheduledOrganizerExport(
+                organizer=self.request.organizer,
+                owner=self.request.user,
+                timezone=str(get_current_timezone()),
+            )
         if not self.scheduled:
             initial = {
                 "mail_subject": gettext("Export: {title}").format(title=self.exporter.verbose_name),
@@ -2199,18 +2217,10 @@ class ExportView(OrganizerPermissionRequiredMixin, ExportMixin, ListView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        if "schedule" in self.request.POST or self.scheduled:
-            if "schedule" in self.request.POST and not self.has_permission():
-                messages.error(
-                    self.request,
-                    _(
-                        "Your user account does not have sufficient permission to run this report, therefore "
-                        "you cannot schedule it."
-                    )
-                )
-            else:
-                ctx['schedule_form'] = self.schedule_form
-                ctx['rrule_form'] = self.rrule_form
+        if "schedule" in self.request.POST or self.scheduled or self.scheduled_copy_from:
+            ctx['schedule_form'] = self.schedule_form
+            ctx['rrule_form'] = self.rrule_form
+            ctx['scheduled_copy_from'] = self.scheduled_copy_from
         elif not self.exporter:
             for s in ctx['scheduled']:
                 try:
@@ -2583,7 +2593,7 @@ class LogView(OrganizerPermissionRequiredMixin, PaginationMixin, ListView):
     def get_queryset(self):
         # technically, we'd also need to sort by pk since this is a paginated list, but in this case we just can't
         # bear the performance cost
-        qs = self.request.organizer.all_logentries().select_related(
+        qs = self.request.organizer.logentry_set.filter(event=None).select_related(
             'user', 'content_type', 'api_token', 'oauth_application', 'device'
         ).order_by('-datetime')
         qs = qs.exclude(action_type__in=OVERVIEW_BANLIST)
@@ -3014,6 +3024,7 @@ class CustomerDetailView(OrganizerDetailViewMixin, OrganizerPermissionRequiredMi
                 locale=self.customer.locale,
                 customer=self.customer,
                 organizer=self.request.organizer,
+                sensitive=True,
             )
             messages.success(
                 self.request,

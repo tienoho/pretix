@@ -1528,7 +1528,7 @@ class CartManager:
             self._sales_channel.identifier,
             [
                 (cp.item_id, cp.subevent_id, cp.subevent.date_from if cp.subevent_id else None, cp.line_price_gross,
-                 bool(cp.addon_to), cp.is_bundled, cp.listed_price - cp.price_after_voucher)
+                 cp.addon_to, cp.is_bundled, cp.listed_price - cp.price_after_voucher)
                 for cp in positions
             ]
         )
@@ -1639,7 +1639,7 @@ def get_fees(event, request, _total_ignored_=None, invoice_address=None, payment
         if fee.tax_rule and not fee.tax_rule.pk:
             fee.tax_rule = None  # TODO: deprecate
 
-    apply_rounding(event.settings.tax_rounding, event.currency, [*positions, *fees])
+    apply_rounding(event.settings.tax_rounding, invoice_address, event.currency, [*positions, *fees])
     total = sum([c.price for c in positions]) + sum([f.value for f in fees])
 
     if total != 0 and payments:
@@ -1679,7 +1679,7 @@ def get_fees(event, request, _total_ignored_=None, invoice_address=None, payment
                 fees.append(pf)
 
                 # Re-apply rounding as grand total has changed
-                apply_rounding(event.settings.tax_rounding, event.currency, [*positions, *fees])
+                apply_rounding(event.settings.tax_rounding, invoice_address, event.currency, [*positions, *fees])
                 total = sum([c.price for c in positions]) + sum([f.value for f in fees])
 
                 # Re-calculate to_pay as grand total has changed

@@ -293,6 +293,7 @@ class Customer(LoggedModel):
             locale=self.locale,
             customer=self,
             organizer=self.organizer,
+            sensitive=True,
         )
 
     def usable_gift_cards(self, used_cards=[]):
@@ -349,7 +350,7 @@ class AttendeeProfile(models.Model):
     def state_name(self):
         sd = pycountry.subdivisions.get(code='{}-{}'.format(self.country, self.state))
         if sd:
-            return sd.name
+            return _(sd.name)
         return self.state
 
     @property
